@@ -1,9 +1,13 @@
 {
-  "name": "@clawdbot/supermemory",
+  "name": "@hoverlover/clawdbot-supermemory",
   "version": "1.0.0",
   "type": "module",
   "description": "Supermemory integration for Clawdbot long-term memory",
   "main": "index.ts",
+  "scripts": {
+    "test": "bunx vitest run",
+    "release": "./scripts/release.sh"
+  },
   "dependencies": {
     "@sinclair/typebox": "^0.34.0"
   },
@@ -23,5 +27,6 @@
     "ai",
     "plugin"
   ],
-  "license": "MIT"
+  "license": "MIT",
+  "packageManager": "bun@1.3.6"
 }
