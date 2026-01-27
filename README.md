@@ -182,6 +182,26 @@ clawdbot gateway restart
 
 Plugin is disabled entirely. No tools registered, no hooks active.
 
+## How It Compares
+
+Clawdbot has three memory tiers. Here's how they differ:
+
+| | memory-core | memory-lancedb | Supermemory |
+|---|---|---|---|
+| **Status** | Default (built-in) | Off by default | Plugin |
+| **Storage** | Local markdown files | LanceDB vector DB | Cloud API |
+| **Capture method** | Manual only | Regex extraction (max 3 fragments/session) | Full compaction summaries (LLM-curated) |
+| **Auto-recall** | No | Yes (vector search) | Yes (semantic search) |
+| **Embeddings** | Local (built-in) | OpenAI API key required | Managed (no key needed) |
+| **Knowledge graph** | No | No | Yes |
+| **User profiles** | No | No | Auto-generated |
+| **Smart forgetting** | No | No | Yes (managed decay) |
+| **External sources** | No | No | Gmail, Notion, Drive, etc. |
+
+**Capture quality** is the biggest difference. memory-lancedb extracts up to 3 short fragments per session using regex pattern matching. Supermemory captures full compaction summaries — LLM-curated distillations of entire conversations, preserving context, decisions, and preferences that regex extraction misses.
+
+**External connections** are unique to Supermemory. Connect Gmail, Notion, Google Drive, and other sources so the agent can recall information beyond just chat history.
+
 ## How It Works
 
 ### Memory Storage (after_compaction hook)
