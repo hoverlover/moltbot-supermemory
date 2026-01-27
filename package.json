@@ -1,6 +1,6 @@
 {
   "name": "@hoverlover/moltbot-supermemory",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "type": "module",
   "description": "Supermemory integration for Moltbot long-term memory",
   "main": "index.ts",
