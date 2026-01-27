@@ -1,0 +1,18 @@
+{
+  "name": "@clawdbot/supermemory",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Supermemory integration for Clawdbot long-term memory",
+  "main": "index.ts",
+  "dependencies": {
+    "@sinclair/typebox": "^0.34.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.0.0"
+  },
+  "clawdbot": {
+    "extensions": ["./index.ts"]
+  },
+  "keywords": ["clawdbot", "supermemory", "memory", "ai", "plugin"],
+  "license": "MIT"
+}

@@ -1,0 +1,19 @@
+{
+  "id": "supermemory",
+  "name": "Supermemory",
+  "version": "1.0.0",
+  "description": "Supermemory integration for Clawdbot long-term memory",
+  "kind": "memory",
+  "entry": "./index.ts",
+  "configSchema": {
+    "type": "object",
+    "properties": {
+      "apiKey": { "type": "string", "description": "Supermemory API key" },
+      "mode": { "type": "string", "enum": ["primary", "tandem", "off"], "default": "tandem" },
+      "containerTag": { "type": "string", "description": "Optional namespace" },
+      "autoRecall": { "type": "boolean", "default": true },
+      "threshold": { "type": "number", "minimum": 0, "maximum": 1, "default": 0.5 },
+      "baseUrl": { "type": "string", "default": "https://api.supermemory.ai", "description": "Supermemory API base URL" }
+    }
+  }
+}
