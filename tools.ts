@@ -9,6 +9,7 @@
 import { Type } from "@sinclair/typebox";
 import type { SupermemoryClient } from "./supermemory-client.js";
 import type { SupermemoryConfig } from "./types.js";
+import { sanitizeQuery } from "./sanitize-query.js";
 
 export type ToolContext = {
   client: SupermemoryClient;
@@ -35,9 +36,18 @@ export function createSupermemorySearchTool(ctx: ToolContext) {
       _toolCallId: string,
       params: { query: string; limit?: number },
     ): Promise<{ content: Array<{ type: "text"; text: string }>; details: Record<string, unknown> }> {
+      // Sanitize query to remove channel metadata and artifacts
+      const sanitizedQuery = sanitizeQuery(params.query);
+      if (!sanitizedQuery || sanitizedQuery.length < 2) {
+        return {
+          content: [{ type: "text", text: "Query too short after sanitization." }],
+          details: { error: "query_too_short", originalQuery: params.query },
+        };
+      }
+
       try {
         const results = await ctx.client.search({
-          q: params.query,
+          q: sanitizedQuery,
           containerTag: ctx.config.containerTag,
           limit: params.limit ?? 5,
           chunkThreshold: ctx.config.threshold,
@@ -95,9 +105,18 @@ export function createMemorySearchTool(ctx: ToolContext) {
       _toolCallId: string,
       params: { query: string; limit?: number },
     ): Promise<{ content: Array<{ type: "text"; text: string }>; details: Record<string, unknown> }> {
+      // Sanitize query to remove channel metadata and artifacts
+      const sanitizedQuery = sanitizeQuery(params.query);
+      if (!sanitizedQuery || sanitizedQuery.length < 2) {
+        return {
+          content: [{ type: "text", text: "Query too short after sanitization." }],
+          details: { error: "query_too_short", source: "supermemory", originalQuery: params.query },
+        };
+      }
+
       try {
         const results = await ctx.client.search({
-          q: params.query,
+          q: sanitizedQuery,
           containerTag: ctx.config.containerTag,
           limit: params.limit ?? 5,
           chunkThreshold: ctx.config.threshold,

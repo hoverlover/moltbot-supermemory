@@ -8,6 +8,7 @@
 
 import type { SupermemoryClient } from "./supermemory-client.js";
 import type { SupermemoryConfig } from "./types.js";
+import { sanitizeQuery } from "./sanitize-query.js";
 
 export type HookContext = {
   client: SupermemoryClient | null;
@@ -43,9 +44,15 @@ export function createBeforeAgentStartHandler(ctx: HookContext) {
       return;
     }
 
+    // Sanitize the prompt to remove channel metadata and artifacts
+    const sanitizedQuery = sanitizeQuery(event.prompt);
+    if (!sanitizedQuery || sanitizedQuery.length < 3) {
+      return;
+    }
+
     try {
       const results = await ctx.client.search({
-        q: event.prompt,
+        q: sanitizedQuery,
         containerTag: ctx.config.containerTag,
         limit: 5,
         chunkThreshold: ctx.config.threshold,
