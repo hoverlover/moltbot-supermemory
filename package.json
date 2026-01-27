@@ -1,8 +1,8 @@
 {
-  "name": "@hoverlover/clawdbot-supermemory",
+  "name": "@hoverlover/moltbot-supermemory",
   "version": "1.0.0",
   "type": "module",
-  "description": "Supermemory integration for Clawdbot long-term memory",
+  "description": "Supermemory integration for Moltbot long-term memory",
   "main": "index.ts",
   "scripts": {
     "test": "bunx vitest run",
@@ -22,6 +22,7 @@
   },
   "keywords": [
     "clawdbot",
+    "moltbot",
     "supermemory",
     "memory",
     "ai",
