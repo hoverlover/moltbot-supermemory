@@ -10,7 +10,13 @@
     "properties": {
       "apiKey": { "type": "string", "description": "Supermemory API key" },
       "mode": { "type": "string", "enum": ["primary", "tandem", "off"], "default": "tandem" },
-      "containerTag": { "type": "string", "description": "Optional namespace" },
+      "containerTag": { "type": "string", "description": "Optional namespace prefix for memories" },
+      "containerScope": {
+        "type": "string",
+        "enum": ["agent", "session"],
+        "default": "agent",
+        "description": "Memory isolation scope. 'agent' shares memories across all sessions (personal assistant). 'session' isolates memories per conversation (multi-group privacy)."
+      },
       "autoRecall": { "type": "boolean", "default": true },
       "threshold": { "type": "number", "minimum": 0, "maximum": 1, "default": 0.5 },
       "baseUrl": { "type": "string", "default": "https://api.supermemory.ai", "description": "Supermemory API base URL" }

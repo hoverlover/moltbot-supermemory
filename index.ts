@@ -56,9 +56,13 @@ const supermemoryPlugin = {
         `configured: ${!!config.apiKey})`,
     );
 
+    // Default agentId: Clawdbot derives agentId from sessionKey (first segment)
+    // with a fallback to "main". Capture at registration for tool context.
+    const defaultAgentId = "main";
+
     // Tool context for tool factories (tools require client)
     if (client) {
-      const toolCtx = { client, config };
+      const toolCtx = { client, config, agentId: defaultAgentId };
 
       // Register tools based on mode
       if (config.mode === "tandem") {
@@ -92,6 +96,7 @@ const supermemoryPlugin = {
       start: () => {
         api.logger.info(
           `supermemory: service started (mode: ${config.mode}, ` +
+            `containerScope: ${config.containerScope}, ` +
             `containerTag: ${config.containerTag ?? "default"}, ` +
             `configured: ${!!config.apiKey})`,
         );

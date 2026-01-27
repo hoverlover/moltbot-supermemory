@@ -22,6 +22,15 @@ export const MemoryMode = Type.Union([
 export type MemoryMode = Static<typeof MemoryMode>;
 
 /**
+ * Container scope for memory isolation:
+ * - agent: Memories shared across all sessions for this agent (personal assistant use case)
+ * - session: Memories isolated per session/conversation (multi-group privacy)
+ */
+export const ContainerScope = Type.Union([Type.Literal("agent"), Type.Literal("session")]);
+
+export type ContainerScope = Static<typeof ContainerScope>;
+
+/**
  * Supermemory plugin configuration schema.
  */
 export const supermemoryConfigSchema = Type.Object({
@@ -39,6 +48,16 @@ export const supermemoryConfigSchema = Type.Object({
   /** Optional container/namespace tag for organizing memories */
   containerTag: Type.Optional(
     Type.String({ description: "Container tag for organizing memories by namespace" }),
+  ),
+
+  /** Memory isolation scope (default: agent) */
+  containerScope: Type.Optional(
+    Type.Union([Type.Literal("agent"), Type.Literal("session")], {
+      default: "agent",
+      description:
+        "Memory isolation scope. 'agent' shares memories across all sessions (personal assistant). " +
+        "'session' isolates memories per conversation (multi-group privacy).",
+    }),
   ),
 
   /** Auto-inject relevant memories on agent start (default: true) */
@@ -123,8 +142,50 @@ export function parseConfig(raw: unknown): SupermemoryConfig {
     apiKey: cfg.apiKey ?? "",
     mode: cfg.mode ?? "tandem",
     containerTag: cfg.containerTag,
+    containerScope: cfg.containerScope ?? "agent",
     autoRecall: cfg.autoRecall ?? true,
     threshold: cfg.threshold ?? 0.5,
     baseUrl: cfg.baseUrl ?? "https://api.supermemory.ai",
   };
+}
+
+/**
+ * Resolve the container tag based on scope configuration.
+ * This determines how memories are isolated/shared.
+ *
+ * @param params - Resolution parameters
+ * @returns Container tag string for Supermemory API
+ */
+export function resolveContainerTag(params: {
+  config: SupermemoryConfig;
+  agentId?: string;
+  sessionKey?: string;
+}): string | undefined {
+  const { config, agentId, sessionKey } = params;
+
+  // If explicit containerTag is set, use it as a prefix
+  const prefix = config.containerTag ? `${config.containerTag}:` : "";
+
+  switch (config.containerScope) {
+    case "session":
+      // Session scope: isolate memories per conversation
+      // e.g. 'agent:main:telegram:group:123' or just the sessionKey
+      if (sessionKey) {
+        return `${prefix}${sessionKey}`;
+      }
+      // Fallback to agentId if no sessionKey
+      if (agentId) {
+        return `${prefix}${agentId}`;
+      }
+      return config.containerTag;
+
+    case "agent":
+    default:
+      // Agent scope: share memories across all sessions
+      // e.g. 'main' (agentId) or just the containerTag
+      if (agentId) {
+        return `${prefix}${agentId}`;
+      }
+      return config.containerTag;
+  }
 }

@@ -8,6 +8,7 @@
 
 import type { SupermemoryClient } from "./supermemory-client.js";
 import type { SupermemoryConfig } from "./types.js";
+import { resolveContainerTag } from "./types.js";
 import { sanitizeQuery } from "./sanitize-query.js";
 
 export type HookContext = {
@@ -27,7 +28,7 @@ export type HookContext = {
 export function createBeforeAgentStartHandler(ctx: HookContext) {
   return async (
     event: { prompt: string; messages?: unknown[] },
-    _hookCtx: { agentId?: string; sessionKey?: string },
+    hookCtx: { agentId?: string; sessionKey?: string },
   ): Promise<{ prependContext?: string } | void> => {
     // Skip if client not configured (apiKey missing)
     if (!ctx.client) {
@@ -50,10 +51,17 @@ export function createBeforeAgentStartHandler(ctx: HookContext) {
       return;
     }
 
+    // Resolve container tag based on scope configuration
+    const containerTag = resolveContainerTag({
+      config: ctx.config,
+      agentId: hookCtx.agentId,
+      sessionKey: hookCtx.sessionKey,
+    });
+
     try {
       const results = await ctx.client.search({
         q: sanitizedQuery,
-        containerTag: ctx.config.containerTag,
+        containerTag,
         limit: 5,
         chunkThreshold: ctx.config.threshold,
       });
@@ -96,7 +104,7 @@ export function createAfterCompactionHandler(ctx: HookContext) {
       sessionId?: string;
       sessionKey?: string;
     },
-    _hookCtx: { agentId?: string; sessionKey?: string },
+    hookCtx: { agentId?: string; sessionKey?: string },
   ): Promise<void> => {
     // Skip if client not configured (apiKey missing)
     if (!ctx.client) {
@@ -115,12 +123,12 @@ export function createAfterCompactionHandler(ctx: HookContext) {
     }
 
     try {
-      // Use sessionKey as part of container tag if available
-      const containerTag = event.sessionKey
-        ? ctx.config.containerTag
-          ? `${ctx.config.containerTag}:${event.sessionKey}`
-          : event.sessionKey
-        : ctx.config.containerTag;
+      // Resolve container tag based on scope configuration
+      const containerTag = resolveContainerTag({
+        config: ctx.config,
+        agentId: hookCtx.agentId,
+        sessionKey: event.sessionKey ?? hookCtx.sessionKey,
+      });
 
       // Store the compacted summary as a document
       const result = await ctx.client.add({

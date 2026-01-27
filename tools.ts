@@ -9,11 +9,14 @@
 import { Type } from "@sinclair/typebox";
 import type { SupermemoryClient } from "./supermemory-client.js";
 import type { SupermemoryConfig } from "./types.js";
+import { resolveContainerTag } from "./types.js";
 import { sanitizeQuery } from "./sanitize-query.js";
 
 export type ToolContext = {
   client: SupermemoryClient;
   config: SupermemoryConfig;
+  /** Default agentId for container tag resolution (captured at registration) */
+  agentId: string;
 };
 
 /**
@@ -45,10 +48,13 @@ export function createSupermemorySearchTool(ctx: ToolContext) {
         };
       }
 
+      // Resolve container tag using agentId captured at registration time
+      const containerTag = resolveContainerTag({ config: ctx.config, agentId: ctx.agentId });
+
       try {
         const results = await ctx.client.search({
           q: sanitizedQuery,
-          containerTag: ctx.config.containerTag,
+          containerTag,
           limit: params.limit ?? 5,
           chunkThreshold: ctx.config.threshold,
         });
@@ -114,10 +120,13 @@ export function createMemorySearchTool(ctx: ToolContext) {
         };
       }
 
+      // Resolve container tag using agentId captured at registration time
+      const containerTag = resolveContainerTag({ config: ctx.config, agentId: ctx.agentId });
+
       try {
         const results = await ctx.client.search({
           q: sanitizedQuery,
-          containerTag: ctx.config.containerTag,
+          containerTag,
           limit: params.limit ?? 5,
           chunkThreshold: ctx.config.threshold,
         });

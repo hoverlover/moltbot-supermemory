@@ -71,10 +71,25 @@ clawdbot gateway restart
 |--------|------|---------|-------------|
 | apiKey | string | (required) | Your Supermemory API key |
 | mode | string | tandem | Memory mode: tandem, primary, or off |
+| containerScope | string | agent | Memory isolation: agent (shared) or session (isolated) |
 | autoRecall | boolean | true | Auto-inject memories on agent start |
 | threshold | number | 0.5 | Chunk relevance threshold (0.0-1.0) |
-| containerTag | string | (optional) | Custom namespace for memories |
+| containerTag | string | (optional) | Custom namespace prefix for memories |
 | baseUrl | string | (optional) | Custom Supermemory API endpoint |
+
+### Memory Isolation (containerScope)
+
+The `containerScope` option controls how memories are organized:
+
+- **agent** (default): Memories are shared across all sessions for the agent. Best for personal assistant use cases where you want the agent to remember everything about you.
+
+- **session**: Memories are isolated per conversation/session. Best for multi-group scenarios where members of different groups should not see each other's memories.
+
+**Privacy note**: If you run Clawdbot in multiple groups where members should not see each other's memories, set `containerScope: "session"`:
+
+```bash
+clawdbot config set plugins.entries.supermemory.config.containerScope "session"
+```
 
 ## Getting a Supermemory API Key
 
@@ -86,24 +101,86 @@ clawdbot gateway restart
 
 ### Tandem Mode (default)
 
-Both Clawdbot's built-in memory and Supermemory are active:
+Both Clawdbot's built-in memory and Supermemory are active simultaneously:
 
-- Built-in `memory_search` remains available
-- Additional `supermemory_search` tool is registered
+- Built-in `memory_search` tool remains available (queries local memory)
+- Additional `supermemory_search` tool is registered (queries Supermemory)
 - Memories are stored in Supermemory on compaction
 - Agent can query either memory source
+- Best for: Testing Supermemory alongside existing memory, or using both for different purposes
 
-### Primary Mode
+### Primary Mode (Replace Built-in Memory)
 
-Supermemory completely replaces built-in memory:
+Supermemory completely replaces Clawdbot's built-in memory system:
 
-- `memory_search` tool queries Supermemory instead
-- Built-in memory system is disabled via slot
-- Requires slot configuration
+- `memory_search` tool queries Supermemory instead of local memory
+- Built-in memory plugins (memory-core, memory-lancedb) are disabled
+- The slot system ensures only one memory plugin is active
+- Best for: Using Supermemory as your sole long-term memory solution
+
+#### Primary Mode Setup - Option 1: CLI Commands
+
+```bash
+# 1. Set memory slot to supermemory (disables memory-core automatically)
+clawdbot config set plugins.slots.memory "supermemory"
+
+# 2. Disable memory-lancedb if installed
+clawdbot plugins disable memory-lancedb
+
+# 3. Set mode to primary
+clawdbot config set plugins.entries.supermemory.config.mode "primary"
+
+# 4. Restart
+clawdbot gateway restart
+```
+
+#### Primary Mode Setup - Option 2: Manual Config (JSON)
+
+Edit `~/.clawdbot/clawdbot.json`:
+
+```json
+{
+  "plugins": {
+    "allow": ["supermemory"],
+    "slots": {
+      "memory": "supermemory"
+    },
+    "entries": {
+      "supermemory": {
+        "enabled": true,
+        "config": {
+          "apiKey": "YOUR_SUPERMEMORY_API_KEY",
+          "mode": "primary",
+          "containerScope": "agent"
+        }
+      },
+      "memory-core": {
+        "enabled": false
+      },
+      "memory-lancedb": {
+        "enabled": false
+      }
+    }
+  }
+}
+```
+
+Then restart:
+
+```bash
+clawdbot gateway restart
+```
+
+#### How the Slot System Works
+
+- Setting `plugins.slots.memory` to `"supermemory"` claims the memory slot
+- This automatically prevents memory-core from loading
+- memory-lancedb should also be disabled to avoid conflicts
+- In primary mode, supermemory registers the `memory_search` tool
 
 ### Off Mode
 
-Plugin is disabled entirely.
+Plugin is disabled entirely. No tools registered, no hooks active.
 
 ## How It Works
 

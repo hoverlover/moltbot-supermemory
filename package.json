@@ -8,11 +8,20 @@
     "@sinclair/typebox": "^0.34.0"
   },
   "devDependencies": {
-    "typescript": "^5.0.0"
+    "typescript": "^5.0.0",
+    "vitest": "^3.2.4"
   },
   "clawdbot": {
-    "extensions": ["./index.ts"]
+    "extensions": [
+      "./index.ts"
+    ]
   },
-  "keywords": ["clawdbot", "supermemory", "memory", "ai", "plugin"],
+  "keywords": [
+    "clawdbot",
+    "supermemory",
+    "memory",
+    "ai",
+    "plugin"
+  ],
   "license": "MIT"
 }
