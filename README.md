@@ -2,6 +2,8 @@
 
 Long-term memory integration for Moltbot using [Supermemory](https://supermemory.ai).
 
+![Supermemory Hero](docs/hero.png)
+
 ## Features
 
 - **Automatic memory storage**: Compacted conversation summaries are automatically stored as long-term memories
