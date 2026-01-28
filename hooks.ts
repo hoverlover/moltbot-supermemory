@@ -106,8 +106,14 @@ export function createAfterCompactionHandler(ctx: HookContext) {
     },
     hookCtx: { agentId?: string; sessionKey?: string },
   ): Promise<void> => {
+    ctx.logger.info(
+      `supermemory: after_compaction fired (client: ${!!ctx.client}, mode: ${ctx.config.mode}, ` +
+        `summaryLen: ${event.summary?.length ?? 0}, compacted: ${event.compactedCount})`,
+    );
+
     // Skip if client not configured (apiKey missing)
     if (!ctx.client) {
+      ctx.logger.warn("supermemory: after_compaction skipped — no client");
       return;
     }
 
