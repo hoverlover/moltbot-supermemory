@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="./banner.png" alt="Moltbot x Supermemory" width="1200" />
+</p>
+
 # @hoverlover/moltbot-supermemory
 
 Long-term memory integration for Moltbot using [Supermemory](https://supermemory.ai).
