@@ -11,6 +11,27 @@ Long-term memory integration for Moltbot using [Supermemory](https://supermemory
 - **Dual-mode operation**: Run alongside built-in memory (tandem) or replace it entirely (primary)
 - **Flexible namespacing**: Organize memories with container tags
 
+## Prerequisites
+
+This plugin requires Moltbot with compaction hook support, which is not yet in the upstream release. Until [the PR is merged](https://github.com/moltbot/moltbot/pull/2618), you must install Moltbot from the `feat/compaction-hooks` branch of the fork:
+
+```bash
+# Install Moltbot from the fork's feature branch
+git clone git@github.com:hoverlover/moltbot.git
+cd moltbot
+
+git co feat/compaction-hooks
+
+pnpm install
+pnpm ui:build # auto-installs UI deps on first run
+pnpm build
+
+pnpm clawdbot onboard --install-daemon
+
+# Dev loop (auto-reload on TS changes)
+pnpm gateway:watch
+```
+
 ## Installation
 
 ### Method 1: CLI Installation (Recommended)
