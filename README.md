@@ -1,6 +1,6 @@
-# @clawdbot/supermemory
+# @moltbot/supermemory
 
-Long-term memory integration for Clawdbot using [Supermemory](https://supermemory.ai).
+Long-term memory integration for Moltbot using [Supermemory](https://supermemory.ai).
 
 ## Features
 
@@ -16,26 +16,26 @@ Long-term memory integration for Clawdbot using [Supermemory](https://supermemor
 ```bash
 # 1. Download and install the plugin
 cd /tmp
-curl -L https://github.com/hoverlover/clawdbot-supermemory/archive/refs/heads/main.tar.gz -o supermemory.tar.gz
-clawdbot plugins install /tmp/supermemory.tar.gz
+curl -L https://github.com/hoverlover/moltbot-supermemory/archive/refs/heads/main.tar.gz -o supermemory.tar.gz
+moltbot plugins install /tmp/supermemory.tar.gz
 
 # 2. Add to allowlist
-clawdbot config set plugins.allow '["supermemory"]'
+moltbot config set plugins.allow '["supermemory"]'
 
 # 3. Enable the plugin
-clawdbot plugins enable supermemory
+moltbot plugins enable supermemory
 
 # 4. Set your Supermemory API key
-clawdbot config set plugins.entries.supermemory.config.apiKey "YOUR_SUPERMEMORY_API_KEY"
+moltbot config set plugins.entries.supermemory.config.apiKey "YOUR_SUPERMEMORY_API_KEY"
 
 # 5. Optionally set mode (tandem is default)
-clawdbot config set plugins.entries.supermemory.config.mode "tandem"
+moltbot config set plugins.entries.supermemory.config.mode "tandem"
 
 # 6. Restart the gateway
-clawdbot gateway restart
+moltbot gateway restart
 
 # 7. Verify
-clawdbot plugins list
+moltbot plugins list
 ```
 
 ### Method 2: Manual Config Editing
@@ -62,7 +62,7 @@ Edit `~/.clawdbot/clawdbot.json` and add/merge:
 Then restart:
 
 ```bash
-clawdbot gateway restart
+moltbot gateway restart
 ```
 
 ## Configuration Options
@@ -85,10 +85,10 @@ The `containerScope` option controls how memories are organized:
 
 - **session**: Memories are isolated per conversation/session. Best for multi-group scenarios where members of different groups should not see each other's memories.
 
-**Privacy note**: If you run Clawdbot in multiple groups where members should not see each other's memories, set `containerScope: "session"`:
+**Privacy note**: If you run Moltbot in multiple groups where members should not see each other's memories, set `containerScope: "session"`:
 
 ```bash
-clawdbot config set plugins.entries.supermemory.config.containerScope "session"
+moltbot config set plugins.entries.supermemory.config.containerScope "session"
 ```
 
 ## Getting a Supermemory API Key
@@ -101,7 +101,7 @@ clawdbot config set plugins.entries.supermemory.config.containerScope "session"
 
 ### Tandem Mode (default)
 
-Both Clawdbot's built-in memory and Supermemory are active simultaneously:
+Both Moltbot's built-in memory and Supermemory are active simultaneously:
 
 - Built-in `memory_search` tool remains available (queries local memory)
 - Additional `supermemory_search` tool is registered (queries Supermemory)
@@ -111,7 +111,7 @@ Both Clawdbot's built-in memory and Supermemory are active simultaneously:
 
 ### Primary Mode (Replace Built-in Memory)
 
-Supermemory completely replaces Clawdbot's built-in memory system:
+Supermemory completely replaces Moltbot's built-in memory system:
 
 - `memory_search` tool queries Supermemory instead of local memory
 - Built-in memory plugins (memory-core, memory-lancedb) are disabled
@@ -122,16 +122,16 @@ Supermemory completely replaces Clawdbot's built-in memory system:
 
 ```bash
 # 1. Set memory slot to supermemory (disables memory-core automatically)
-clawdbot config set plugins.slots.memory "supermemory"
+moltbot config set plugins.slots.memory "supermemory"
 
 # 2. Disable memory-lancedb if installed
-clawdbot plugins disable memory-lancedb
+moltbot plugins disable memory-lancedb
 
 # 3. Set mode to primary
-clawdbot config set plugins.entries.supermemory.config.mode "primary"
+moltbot config set plugins.entries.supermemory.config.mode "primary"
 
 # 4. Restart
-clawdbot gateway restart
+moltbot gateway restart
 ```
 
 #### Primary Mode Setup - Option 2: Manual Config (JSON)
@@ -168,7 +168,7 @@ Edit `~/.clawdbot/clawdbot.json`:
 Then restart:
 
 ```bash
-clawdbot gateway restart
+moltbot gateway restart
 ```
 
 #### How the Slot System Works
@@ -184,7 +184,7 @@ Plugin is disabled entirely. No tools registered, no hooks active.
 
 ## How It Compares
 
-Clawdbot has three memory tiers. Here's how they differ:
+Moltbot has three memory tiers. Here's how they differ:
 
 | | memory-core | memory-lancedb | Supermemory |
 |---|---|---|---|
