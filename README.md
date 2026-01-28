@@ -1,4 +1,4 @@
-# @moltbot/supermemory
+# @hoverlover/moltbot-supermemory
 
 Long-term memory integration for Moltbot using [Supermemory](https://supermemory.ai).
 
